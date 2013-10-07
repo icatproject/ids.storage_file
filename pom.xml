@@ -2,15 +2,19 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.icatproject</groupId>
     <artifactId>ids.storage_file</artifactId>
-    <packaging>war</packaging>
     <version>1.0.0-SNAPSHOT</version>
     <name>IDS storage_file</name>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    </properties>
 
     <distributionManagement>
         <downloadUrl>http://www.icatproject.org/mvn/repo</downloadUrl>
         <site>
             <id>website</id>
-            <url>scp://www.icatproject.org/var/www/html/mvn/site/ids.storage_file/${project.version}</url>
+            <url>scp://www.icatproject.org/var/www/html/mvn/site/ids/storage_file/${project.version}</url>
         </site>
         <repository>
             <id>repo</id>
@@ -18,7 +22,7 @@
         </repository>
     </distributionManagement>
 
-    <description>ICAT Data Service to provide a uniform interface to data.</description>
+    <description>File plugin for ICAT Data Service.</description>
     <issueManagement>
         <url>http://code.google.com/p/icat-data-service/issues/list</url>
         <system>Google Code</system>
@@ -62,32 +66,8 @@
             </snapshots>
         </repository>
     </repositories>
+
     <dependencies>
-
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.8</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.6.4</version>
-        </dependency>
-
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.16</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.6.4</version>
-        </dependency>
 
         <dependency>
             <groupId>org.icatproject</groupId>
@@ -97,13 +77,15 @@
 
         <dependency>
             <groupId>org.icatproject</groupId>
-            <artifactId>ids</artifactId>
+            <artifactId>ids.plugin</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
     </dependencies>
+
     <build>
         <plugins>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -113,29 +95,28 @@
                     <target>1.7</target>
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>2.0.2</version>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.1</version>
                 <configuration>
-                    <failOnMissingWebXml>false</failOnMissingWebXml>
-                    <webResources>
-                        <resource>
-                            <directory>src</directory>
-                            <targetPath>WEB-INF</targetPath>
-                            <includes>
-                                <include>wsdl/**</include>
-                            </includes>
-                        </resource>
-                        <resource>
-                            <directory>src/main/resources/META-INF</directory>
-                            <targetPath>WEB-INF/classes/META-INF</targetPath>
-                            <includes>
-                                <include>**/**</include>
-                            </includes>
-                        </resource>
-                    </webResources>
+                    <artifactSet>
+                        <includes>
+                            <include>org.icatproject:ids.storage</include>
+                            <include>org.icatproject:ids.plugin</include>
+                            <include>org.icatproject:icat.utils</include>
+                        </includes>
+                    </artifactSet>
                 </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>
@@ -169,6 +150,20 @@
                     </dependency>
                 </dependencies>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>2.7</version>
+                <dependencies>
+                    <dependency><!-- add support for ssh/scp -->
+                        <groupId>org.apache.maven.wagon</groupId>
+                        <artifactId>wagon-ssh</artifactId>
+                        <version>1.0</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+
         </plugins>
 
     </build>
