@@ -1,0 +1,8 @@
+# Glasfish home, must contain "glassfish/domains"
+#
+glassfish=/home/fisher/pf/glassfish3
+
+
+# Glassfish admin port (normally 4848)
+#
+port=4848
