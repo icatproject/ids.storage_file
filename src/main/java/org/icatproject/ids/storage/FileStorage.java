@@ -122,7 +122,7 @@ public class FileStorage implements StorageInterface {
 	}
 
 	@Override
-	public InputStream getPreparedZip(String zipName, long offset) throws IOException {
+	public InputStream getPreparedZip(String zipName) throws IOException {
 		if (STORAGE_PREPARED_DIR == null) {
 			throw new UnsupportedOperationException(String.format(
 					"Storage %s doesn't support preparation of zip files for users", storageType));
@@ -131,13 +131,7 @@ public class FileStorage implements StorageInterface {
 		if (!preparedZip.exists()) {
 			throw new FileNotFoundException(preparedZip.getAbsolutePath());
 		}
-		if (offset >= preparedZip.length()) {
-			throw new IllegalArgumentException("Offset (" + offset
-					+ " bytes) is larger than file size (" + preparedZip.length() + " bytes)");
-		}
-		BufferedInputStream res = new BufferedInputStream(new FileInputStream(preparedZip));
-		res.skip(offset);
-		return res;
+		return new BufferedInputStream(new FileInputStream(preparedZip));
 	}
 
 	@Override
