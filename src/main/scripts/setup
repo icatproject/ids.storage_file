@@ -8,8 +8,8 @@ actions, options, arg = getActions()
 props = actions.getGlassfish("ids.storage_file-setup.properties", ["glassfish", "port"])
 
 prop_lists = {}
-prop_lists["ids.storage_file.main.properties"] = ["zipDir", "dir", "preparedDir"]
-prop_lists["ids.storage_file.archive.properties"] = ["zipDir"]
+prop_lists["ids.storage_file.main.properties"] = ["dir"]
+prop_lists["ids.storage_file.archive.properties"] = ["dir"]
 
 
 if arg == "CONFIGURE":
