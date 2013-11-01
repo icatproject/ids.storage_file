@@ -27,6 +27,8 @@ elif arg == "INSTALL":
    
     try:          
         actions.installToApplibs("ids.storage_file*.jar")
+        actions.stopDomain()
+        actions.startDomain()
     except Exception, e:
         raise
         abort(str(e))
