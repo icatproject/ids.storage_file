@@ -1,12 +1,12 @@
 package org.icatproject.ids.storage;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.zip.CRC32;
 
 import org.icatproject.ids.plugin.DsInfo;
@@ -16,9 +16,9 @@ import org.icatproject.utils.CheckedProperties.CheckedPropertyException;
 
 public class MainFileStorage implements MainStorageInterface {
 
-	private final int BUFSIZ = 2048;
-
 	Path baseDir;
+
+	private final int BUFSIZ = 2048;
 
 	public MainFileStorage(File properties) throws IOException {
 		try {
@@ -40,50 +40,25 @@ public class MainFileStorage implements MainStorageInterface {
 	}
 
 	@Override
-	public DfInfo put(DsInfo dsInfo, String name, InputStream is) throws IOException {
-		String location = dsInfo.getFacilityName() + "/" + dsInfo.getInvName() + "/"
-				+ dsInfo.getVisitId() + "/" + dsInfo.getDsName() + "/" + name;
-
-		Path path = baseDir.resolve(location);
-		Files.createDirectories(path.getParent());
-
-		BufferedInputStream bis = null;
-		BufferedOutputStream bos = null;
-		CRC32 crc = new CRC32();
-		long len = 0;
-		try {
-			bos = new BufferedOutputStream(Files.newOutputStream(path));
-			int bytesRead = 0;
-			byte[] buffer = new byte[BUFSIZ];
-			bis = new BufferedInputStream(is);
-
-			while ((bytesRead = bis.read(buffer)) > 0) {
-				bos.write(buffer, 0, bytesRead);
-				crc.update(buffer, 0, bytesRead);
-				len += bytesRead;
-			}
-		} finally {
-			if (bis != null) {
-				bis.close();
-			}
-			if (bos != null) {
-				bos.close();
-			}
-		}
-
-		return new DfInfo(location, len, crc.getValue());
-	}
-
-	@Override
-	public InputStream get(String location) throws IOException {
-		return Files.newInputStream(baseDir.resolve(location));
-	}
-
-	@Override
-	public boolean exists(DsInfo dsInfo) throws IOException {
+	public void delete(DsInfo dsInfo) throws IOException {
 		String location = dsInfo.getFacilityName() + "/" + dsInfo.getInvName() + "/"
 				+ dsInfo.getVisitId() + "/" + dsInfo.getDsName();
-		return Files.exists(baseDir.resolve(location));
+		Path path = baseDir.resolve(location);
+		TreeDeleteVisitor treeDeleteVisitor = new TreeDeleteVisitor();
+		if (Files.exists(path)) {
+			Files.walkFileTree(path, treeDeleteVisitor);
+		}
+		/* Try deleting empty directories */
+		path = path.getParent();
+		try {
+			while (!path.equals(baseDir)) {
+				Files.delete(path);
+				path = path.getParent();
+			}
+		} catch (IOException e) {
+			// Directory probably not empty
+		}
+
 	}
 
 	@Override
@@ -100,6 +75,59 @@ public class MainFileStorage implements MainStorageInterface {
 		} catch (IOException e) {
 			// Directory probably not empty
 		}
+	}
+
+	@Override
+	public boolean exists(DsInfo dsInfo) throws IOException {
+		String location = dsInfo.getFacilityName() + "/" + dsInfo.getInvName() + "/"
+				+ dsInfo.getVisitId() + "/" + dsInfo.getDsName();
+		return Files.exists(baseDir.resolve(location));
+	}
+
+	@Override
+	public List<String> getLocations(DsInfo dsInfo) throws IOException {
+		String location = dsInfo.getFacilityName() + "/" + dsInfo.getInvName() + "/"
+				+ dsInfo.getVisitId() + "/" + dsInfo.getDsName();
+		Path path = baseDir.resolve(location);
+		TreeAddToZipVisitor visitor = new TreeAddToZipVisitor(baseDir);
+		if (Files.exists(path)) {
+			Files.walkFileTree(path, visitor);
+		}
+		return visitor.getLocations();
+	}
+
+	@Override
+	public InputStream get(String location) throws IOException {
+		return Files.newInputStream(baseDir.resolve(location));
+	}
+
+	@Override
+	public DfInfo put(DsInfo dsInfo, String name, InputStream is) throws IOException {
+		String location = dsInfo.getFacilityName() + "/" + dsInfo.getInvName() + "/"
+				+ dsInfo.getVisitId() + "/" + dsInfo.getDsName() + "/" + name;
+
+		Path path = baseDir.resolve(location);
+		Files.createDirectories(path.getParent());
+
+		BufferedOutputStream bos = null;
+		CRC32 crc = new CRC32();
+		long len = 0;
+		try {
+			bos = new BufferedOutputStream(Files.newOutputStream(path));
+			int bytesRead = 0;
+			byte[] buffer = new byte[BUFSIZ];
+			while ((bytesRead = is.read(buffer)) > 0) {
+				bos.write(buffer, 0, bytesRead);
+				crc.update(buffer, 0, bytesRead);
+				len += bytesRead;
+			}
+		} finally {
+			if (bos != null) {
+				bos.close();
+			}
+		}
+
+		return new DfInfo(location, len, crc.getValue());
 	}
 
 }
