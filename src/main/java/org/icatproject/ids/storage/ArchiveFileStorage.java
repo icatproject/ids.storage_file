@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 
 import org.icatproject.ids.plugin.ArchiveStorageInterface;
 import org.icatproject.ids.plugin.DsInfo;
@@ -45,7 +46,7 @@ public class ArchiveFileStorage implements ArchiveStorageInterface {
 	public void put(DsInfo dsInfo, InputStream inputStream) throws IOException {
 		String location = dsInfo.getFacilityName() + "/" + dsInfo.getInvName() + "/"
 				+ dsInfo.getVisitId() + "/" + dsInfo.getDsName();
-		Files.copy(inputStream, baseDir.resolve(location));
+		Files.copy(inputStream, baseDir.resolve(location), StandardCopyOption.REPLACE_EXISTING);
 	}
 
 	@Override
