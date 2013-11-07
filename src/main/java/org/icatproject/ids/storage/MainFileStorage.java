@@ -130,4 +130,28 @@ public class MainFileStorage implements MainStorageInterface {
 		return new DfInfo(location, len, crc.getValue());
 	}
 
+	@Override
+	public void putUnchecked(DsInfo dsInfo, String name, InputStream is) throws IOException {
+		String location = dsInfo.getFacilityName() + "/" + dsInfo.getInvName() + "/"
+				+ dsInfo.getVisitId() + "/" + dsInfo.getDsName() + "/" + name;
+
+		Path path = baseDir.resolve(location);
+		Files.createDirectories(path.getParent());
+
+		BufferedOutputStream bos = null;
+
+		try {
+			bos = new BufferedOutputStream(Files.newOutputStream(path));
+			int bytesRead = 0;
+			byte[] buffer = new byte[BUFSIZ];
+			while ((bytesRead = is.read(buffer)) > 0) {
+				bos.write(buffer, 0, bytesRead);
+			}
+		} finally {
+			if (bos != null) {
+				bos.close();
+			}
+		}
+	}
+
 }
