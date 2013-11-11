@@ -1,13 +1,12 @@
 package org.icatproject.ids.storage;
 
-import java.io.BufferedOutputStream;
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.zip.CRC32;
 
 import org.icatproject.ids.plugin.DsInfo;
 import org.icatproject.ids.plugin.MainStorageInterface;
@@ -17,8 +16,6 @@ import org.icatproject.utils.CheckedProperties.CheckedPropertyException;
 public class MainFileStorage implements MainStorageInterface {
 
 	Path baseDir;
-
-	private final int BUFSIZ = 2048;
 
 	public MainFileStorage(File properties) throws IOException {
 		try {
@@ -102,56 +99,14 @@ public class MainFileStorage implements MainStorageInterface {
 	}
 
 	@Override
-	public DfInfo put(DsInfo dsInfo, String name, InputStream is) throws IOException {
+	public String put(DsInfo dsInfo, String name, InputStream is) throws IOException {
 		String location = dsInfo.getFacilityName() + "/" + dsInfo.getInvName() + "/"
 				+ dsInfo.getVisitId() + "/" + dsInfo.getDsName() + "/" + name;
 
 		Path path = baseDir.resolve(location);
 		Files.createDirectories(path.getParent());
-
-		BufferedOutputStream bos = null;
-		CRC32 crc = new CRC32();
-		long len = 0;
-		try {
-			bos = new BufferedOutputStream(Files.newOutputStream(path));
-			int bytesRead = 0;
-			byte[] buffer = new byte[BUFSIZ];
-			while ((bytesRead = is.read(buffer)) > 0) {
-				bos.write(buffer, 0, bytesRead);
-				crc.update(buffer, 0, bytesRead);
-				len += bytesRead;
-			}
-		} finally {
-			if (bos != null) {
-				bos.close();
-			}
-		}
-
-		return new DfInfo(location, len, crc.getValue());
-	}
-
-	@Override
-	public void putUnchecked(DsInfo dsInfo, String name, InputStream is) throws IOException {
-		String location = dsInfo.getFacilityName() + "/" + dsInfo.getInvName() + "/"
-				+ dsInfo.getVisitId() + "/" + dsInfo.getDsName() + "/" + name;
-
-		Path path = baseDir.resolve(location);
-		Files.createDirectories(path.getParent());
-
-		BufferedOutputStream bos = null;
-
-		try {
-			bos = new BufferedOutputStream(Files.newOutputStream(path));
-			int bytesRead = 0;
-			byte[] buffer = new byte[BUFSIZ];
-			while ((bytesRead = is.read(buffer)) > 0) {
-				bos.write(buffer, 0, bytesRead);
-			}
-		} finally {
-			if (bos != null) {
-				bos.close();
-			}
-		}
+		Files.copy(new BufferedInputStream(is), path);
+		return location;
 	}
 
 }
