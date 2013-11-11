@@ -22,6 +22,11 @@ elif arg == "INSTALL":
     actions.checkConfigured()
     
     for prop_name, prop_list in prop_lists.items():
+        props = actions.getProperties(prop_name, prop_list)
+        if not actions.configFileExists(props.get("dir")):
+            abort("Please create directory " + props.get("dir") + " relative to the config directory as specified in " + prop_name)
+    
+    for prop_name, prop_list in prop_lists.items():
         actions.getProperties(prop_name, prop_list)
         actions.installFile(prop_name)
    
