@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
+import java.util.UUID;
 
 import org.icatproject.ids.plugin.DsInfo;
 import org.icatproject.ids.plugin.MainStorageInterface;
@@ -38,9 +38,7 @@ public class MainFileStorage implements MainStorageInterface {
 
 	@Override
 	public void delete(DsInfo dsInfo) throws IOException {
-		String location = dsInfo.getFacilityName() + "/" + dsInfo.getInvName() + "/"
-				+ dsInfo.getVisitId() + "/" + dsInfo.getDsName();
-		Path path = baseDir.resolve(location);
+		Path path = baseDir.resolve(getRelPath(dsInfo));
 		TreeDeleteVisitor treeDeleteVisitor = new TreeDeleteVisitor();
 		if (Files.exists(path)) {
 			Files.walkFileTree(path, treeDeleteVisitor);
@@ -76,21 +74,7 @@ public class MainFileStorage implements MainStorageInterface {
 
 	@Override
 	public boolean exists(DsInfo dsInfo) throws IOException {
-		String location = dsInfo.getFacilityName() + "/" + dsInfo.getInvName() + "/"
-				+ dsInfo.getVisitId() + "/" + dsInfo.getDsName();
-		return Files.exists(baseDir.resolve(location));
-	}
-
-	@Override
-	public List<String> getLocations(DsInfo dsInfo) throws IOException {
-		String location = dsInfo.getFacilityName() + "/" + dsInfo.getInvName() + "/"
-				+ dsInfo.getVisitId() + "/" + dsInfo.getDsName();
-		Path path = baseDir.resolve(location);
-		TreeAddToZipVisitor visitor = new TreeAddToZipVisitor(baseDir);
-		if (Files.exists(path)) {
-			Files.walkFileTree(path, visitor);
-		}
-		return visitor.getLocations();
+		return Files.exists(baseDir.resolve(getRelPath(dsInfo)));
 	}
 
 	@Override
@@ -100,13 +84,22 @@ public class MainFileStorage implements MainStorageInterface {
 
 	@Override
 	public String put(DsInfo dsInfo, String name, InputStream is) throws IOException {
-		String location = dsInfo.getFacilityName() + "/" + dsInfo.getInvName() + "/"
-				+ dsInfo.getVisitId() + "/" + dsInfo.getDsName() + "/" + name;
-
+		String location = getRelPath(dsInfo) + "/" + UUID.randomUUID();
 		Path path = baseDir.resolve(location);
 		Files.createDirectories(path.getParent());
 		Files.copy(new BufferedInputStream(is), path);
 		return location;
+	}
+
+	private String getRelPath(DsInfo dsInfo) {
+		return dsInfo.getInvId() + "/" + dsInfo.getDsId();
+	}
+
+	@Override
+	public void put(DsInfo dsInfo, String name, InputStream is, String location) throws IOException {
+		Path path = baseDir.resolve(location);
+		Files.createDirectories(path.getParent());
+		Files.copy(new BufferedInputStream(is), path);		
 	}
 
 }

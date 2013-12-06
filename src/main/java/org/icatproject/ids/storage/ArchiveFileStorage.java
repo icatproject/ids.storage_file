@@ -37,22 +37,19 @@ public class ArchiveFileStorage implements ArchiveStorageInterface {
 
 	@Override
 	public void delete(DsInfo dsInfo) throws IOException {
-		String location = dsInfo.getFacilityName() + "/" + dsInfo.getInvName() + "/"
-				+ dsInfo.getVisitId() + "/" + dsInfo.getDsName();
+		String location = dsInfo.getInvId() + "/" + dsInfo.getDsId();
 		Files.delete(baseDir.resolve(location));
 	}
 
 	@Override
 	public void put(DsInfo dsInfo, InputStream inputStream) throws IOException {
-		String location = dsInfo.getFacilityName() + "/" + dsInfo.getInvName() + "/"
-				+ dsInfo.getVisitId() + "/" + dsInfo.getDsName();
+		String location = dsInfo.getInvId() + "/" + dsInfo.getDsId();
 		Files.copy(inputStream, baseDir.resolve(location), StandardCopyOption.REPLACE_EXISTING);
 	}
 
 	@Override
 	public InputStream get(DsInfo dsInfo) throws IOException {
-		String location = dsInfo.getFacilityName() + "/" + dsInfo.getInvName() + "/"
-				+ dsInfo.getVisitId() + "/" + dsInfo.getDsName();
+		String location = dsInfo.getInvId() + "/" + dsInfo.getDsId();
 		return Files.newInputStream(baseDir.resolve(location));
 	}
 
