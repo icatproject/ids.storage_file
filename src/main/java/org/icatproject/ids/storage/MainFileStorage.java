@@ -78,7 +78,7 @@ public class MainFileStorage implements MainStorageInterface {
 	}
 
 	@Override
-	public InputStream get(String location) throws IOException {
+	public InputStream get(String location, String creator) throws IOException {
 		return Files.newInputStream(baseDir.resolve(location));
 	}
 
@@ -96,10 +96,10 @@ public class MainFileStorage implements MainStorageInterface {
 	}
 
 	@Override
-	public void put(DsInfo dsInfo, String name, InputStream is, String location) throws IOException {
+	public void put(InputStream is, String location) throws IOException {
 		Path path = baseDir.resolve(location);
 		Files.createDirectories(path.getParent());
-		Files.copy(new BufferedInputStream(is), path);		
+		Files.copy(new BufferedInputStream(is), path);
 	}
 
 }
