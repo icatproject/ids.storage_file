@@ -6,6 +6,11 @@
     </properties>
 
     <body>
+        <section name="1.1.0">
+            <p>Implements plugin interfaces version 1.1.0
+            </p>
+        </section>
+        
         <section name="1.0.0">
             <p>Initial public release.
             </p>

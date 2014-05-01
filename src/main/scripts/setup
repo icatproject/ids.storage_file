@@ -12,15 +12,13 @@ prop_lists["ids.storage_file.main.properties"] = ["dir"]
 prop_lists["ids.storage_file.archive.properties"] = ["dir"]
 
 
-if arg == "CONFIGURE":
+if arg in ["CONFIGURE", "INSTALL"]:
     for prop_name, prop_list in prop_lists.items():
         actions.configure(prop_name, prop_list)
-    actions.setConfigured()
+    actions.checkNoErrors()
 
-elif arg == "INSTALL":
-    
-    actions.checkConfigured()
-    
+if arg == "INSTALL":
+        
     for prop_name, prop_list in prop_lists.items():
         props = actions.getProperties(prop_name, prop_list)
         if not actions.configFileExists(props.get("dir")):
@@ -41,8 +39,7 @@ elif arg == "INSTALL":
         raise
         abort(str(e))
                 
-else:  # UNINSTALL
-    
+if arg == "UNINSTALL":
     for prop_name in prop_lists:
         actions.removeFile(prop_name)
     
