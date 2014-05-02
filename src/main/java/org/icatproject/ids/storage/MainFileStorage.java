@@ -78,7 +78,7 @@ public class MainFileStorage implements MainStorageInterface {
 	}
 
 	@Override
-	public InputStream get(String location, String creator) throws IOException {
+	public InputStream get(String location, String createId, String modId) throws IOException {
 		return Files.newInputStream(baseDir.resolve(location));
 	}
 
