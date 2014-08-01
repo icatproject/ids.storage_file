@@ -6,6 +6,12 @@
     </properties>
 
     <body>
+
+        <section name="1.2.0">
+            <p>Implements plugin interfaces version 1.2.0.
+            </p>
+        </section>
+
         <section name="1.1.0">
             <p>Implements plugin interfaces version 1.1.0. This may not be compatible with files stored by version 1.0.0.
             </p>

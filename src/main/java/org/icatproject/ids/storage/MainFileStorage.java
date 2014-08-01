@@ -6,6 +6,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.UUID;
 
 import org.icatproject.ids.plugin.DsInfo;
@@ -16,6 +21,16 @@ import org.icatproject.utils.CheckedProperties.CheckedPropertyException;
 public class MainFileStorage implements MainStorageInterface {
 
 	Path baseDir;
+
+	static Comparator<File> dateComparator = new Comparator<File>() {
+
+		@Override
+		public int compare(File o1, File o2) {
+			long m1 = o1.lastModified();
+			long m2 = o2.lastModified();
+			return (m1 < m2) ? -1 : ((m1 == m2) ? 0 : 1);
+		}
+	};
 
 	public MainFileStorage(File properties) throws IOException {
 		try {
@@ -100,6 +115,34 @@ public class MainFileStorage implements MainStorageInterface {
 		Path path = baseDir.resolve(location);
 		Files.createDirectories(path.getParent());
 		Files.copy(new BufferedInputStream(is), path);
+	}
+
+	@Override
+	public long getUsableSpace() throws IOException {
+		return baseDir.toFile().getUsableSpace();
+	}
+
+	@Override
+	public List<Long> getInvestigations() throws IOException {
+		List<File> files = Arrays.asList(baseDir.toFile().listFiles());
+		Collections.sort(files, dateComparator);
+		List<Long> results = new ArrayList<>(files.size());
+		for (File file : files) {
+			results.add(Long.parseLong(file.getName()));
+		}
+		return results;
+	}
+
+	@Override
+	public List<Long> getDatasets(long invId) throws IOException {
+		List<File> files = Arrays
+				.asList(baseDir.resolve(Long.toString(invId)).toFile().listFiles());
+		Collections.sort(files, dateComparator);
+		List<Long> results = new ArrayList<>(files.size());
+		for (File file : files) {
+			results.add(Long.parseLong(file.getName()));
+		}
+		return results;
 	}
 
 }
