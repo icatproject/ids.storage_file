@@ -57,9 +57,9 @@ public class ArchiveFileStorage implements ArchiveStorageInterface {
 	}
 
 	@Override
-	public InputStream get(DsInfo dsInfo) throws IOException {
+	public void get(DsInfo dsInfo, Path path) throws IOException {
 		String location = dsInfo.getInvId() + "/" + dsInfo.getDsId();
-		return Files.newInputStream(baseDir.resolve(location));
+		Files.copy(baseDir.resolve(location), path, StandardCopyOption.REPLACE_EXISTING);
 	}
 
 }

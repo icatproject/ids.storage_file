@@ -145,4 +145,9 @@ public class MainFileStorage implements MainStorageInterface {
 		return results;
 	}
 
+	@Override
+	public Path getPath(String location, String createId, String modId) throws IOException {
+		return baseDir.resolve(location);
+	}
+
 }
