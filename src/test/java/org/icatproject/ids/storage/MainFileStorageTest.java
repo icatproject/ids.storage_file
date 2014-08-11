@@ -72,7 +72,7 @@ public class MainFileStorageTest {
 
 	@Test
 	public void testSpace() throws Exception {
-		assertTrue(mainFileStorage.getUsableSpace() > 1000L);
+		assertTrue(mainFileStorage.getUsedSpace() > 1000L);
 	}
 
 	@Test

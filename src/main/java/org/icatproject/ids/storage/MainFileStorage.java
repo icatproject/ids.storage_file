@@ -118,11 +118,6 @@ public class MainFileStorage implements MainStorageInterface {
 	}
 
 	@Override
-	public long getUsableSpace() throws IOException {
-		return baseDir.toFile().getUsableSpace();
-	}
-
-	@Override
 	public List<Long> getInvestigations() throws IOException {
 		List<File> files = Arrays.asList(baseDir.toFile().listFiles());
 		Collections.sort(files, dateComparator);
@@ -148,6 +143,15 @@ public class MainFileStorage implements MainStorageInterface {
 	@Override
 	public Path getPath(String location, String createId, String modId) throws IOException {
 		return baseDir.resolve(location);
+	}
+
+	// This implementation is robust and simple but might be too costly if you have a lot of files
+	// in main storage. It takes about a second (on my laptop) to go through 100,000 files.
+	@Override
+	public long getUsedSpace() throws IOException {
+		TreeSizeVisitor visitor = new TreeSizeVisitor();
+		Files.walkFileTree(baseDir, visitor);
+		return visitor.getSize();
 	}
 
 }
