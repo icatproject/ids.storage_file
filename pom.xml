@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.icatproject</groupId>
     <artifactId>ids.storage_file</artifactId>
-    <version>1.2.0-SNAPSHOT</version>
+    <version>1.2.0</version>
     <name>IDS storage_file</name>
 
     <properties>
@@ -30,9 +30,9 @@
     </issueManagement>
 
     <scm>
-        <connection>scm:svn:http://icat-data-service.googlecode.com/svn/storage_file/trunk</connection>
-        <developerConnection>scm:svn:https://icat-data-service.googlecode.com/svn/storage_file/trunk</developerConnection>
-        <url>http://code.google.com/p/icat-data-service/source/browse/#svn%2Fstorage_file%2Ftrunk</url>
+        <connection>scm:svn:http://icat-data-service.googlecode.com/svn/storage_file/tags/ids.storage_file-1.2.0</connection>
+        <developerConnection>scm:svn:https://icat-data-service.googlecode.com/svn/storage_file/tags/ids.storage_file-1.2.0</developerConnection>
+        <url>http://code.google.com/p/icat-data-service/source/browse/#svn%2Fstorage_file%2Ftrunk/tags/ids.storage_file-1.2.0</url>
     </scm>
 
     <licenses>
