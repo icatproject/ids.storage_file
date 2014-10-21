@@ -154,4 +154,9 @@ public class MainFileStorage implements MainStorageInterface {
 		return visitor.getSize();
 	}
 
+	@Override
+	public boolean exists(String location) throws IOException {
+		return Files.exists(baseDir.resolve(location));
+	}
+
 }
