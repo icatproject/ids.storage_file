@@ -7,12 +7,14 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
+import org.icatproject.ids.plugin.DfInfo;
 import org.icatproject.ids.plugin.DsInfo;
 import org.icatproject.ids.plugin.MainStorageInterface;
 import org.icatproject.utils.CheckedProperties;
@@ -21,16 +23,6 @@ import org.icatproject.utils.CheckedProperties.CheckedPropertyException;
 public class MainFileStorage implements MainStorageInterface {
 
 	Path baseDir;
-
-	static Comparator<File> dateComparator = new Comparator<File>() {
-
-		@Override
-		public int compare(File o1, File o2) {
-			long m1 = o1.lastModified();
-			long m2 = o2.lastModified();
-			return (m1 < m2) ? -1 : ((m1 == m2) ? 0 : 1);
-		}
-	};
 
 	public MainFileStorage(File properties) throws IOException {
 		try {
@@ -118,45 +110,75 @@ public class MainFileStorage implements MainStorageInterface {
 	}
 
 	@Override
-	public List<Long> getInvestigations() throws IOException {
-		List<File> files = Arrays.asList(baseDir.toFile().listFiles());
-		Collections.sort(files, dateComparator);
-		List<Long> results = new ArrayList<>(files.size());
-		for (File file : files) {
-			results.add(Long.parseLong(file.getName()));
-		}
-		return results;
-	}
-
-	@Override
-	public List<Long> getDatasets(long invId) throws IOException {
-		List<File> files = Arrays
-				.asList(baseDir.resolve(Long.toString(invId)).toFile().listFiles());
-		Collections.sort(files, dateComparator);
-		List<Long> results = new ArrayList<>(files.size());
-		for (File file : files) {
-			results.add(Long.parseLong(file.getName()));
-		}
-		return results;
-	}
-
-	@Override
 	public Path getPath(String location, String createId, String modId) throws IOException {
 		return baseDir.resolve(location);
-	}
-
-	// This implementation is robust and simple but might be too costly if you have a lot of files
-	// in main storage. It takes about a second (on my laptop) to go through 100,000 files.
-	@Override
-	public long getUsedSpace() throws IOException {
-		TreeSizeVisitor visitor = new TreeSizeVisitor();
-		Files.walkFileTree(baseDir, visitor);
-		return visitor.getSize();
 	}
 
 	@Override
 	public boolean exists(String location) throws IOException {
 		return Files.exists(baseDir.resolve(location));
+	}
+
+	/*
+	 * This assumes that all datafiles within a dataset have roughly the same date. If not it will
+	 * archive much more than necessary.
+	 */
+	@Override
+	public List<DsInfo> getDatasetsToArchive(long lowArchivingLevel, long highArchivingLevel)
+			throws IOException {
+		TreeSizeVisitor treeSizeVisitor = new TreeSizeVisitor(baseDir);
+
+		Files.walkFileTree(baseDir, treeSizeVisitor);
+		long size = treeSizeVisitor.getSize();
+
+		if (size < highArchivingLevel) {
+			return Collections.emptyList();
+		}
+
+		long recover = size - lowArchivingLevel;
+
+		List<DsInfo> result = new ArrayList<>();
+		Map<Path, Long> sizes = treeSizeVisitor.getSizes();
+		Set<String> keys = new HashSet<>();
+		for (Path path : treeSizeVisitor.getDates()) {
+			recover -= sizes.get(path);
+			long invId = Long.parseLong(path.getName(0).toString());
+			long dsId = Long.parseLong(path.getName(1).toString());
+			if (keys.add(invId + " " + dsId)) {
+				result.add(new DsInfoImpl(invId, dsId));
+			}
+			if (recover <= 0) {
+				break;
+			}
+		}
+		return result;
+	}
+
+	@Override
+	public List<DfInfo> getDatafilesToArchive(long lowArchivingLevel, long highArchivingLevel)
+			throws IOException {
+		TreeSizeVisitor treeSizeVisitor = new TreeSizeVisitor(baseDir);
+
+		Files.walkFileTree(baseDir, treeSizeVisitor);
+		long size = treeSizeVisitor.getSize();
+
+		if (size < highArchivingLevel) {
+			return Collections.emptyList();
+		}
+
+		long recover = size - lowArchivingLevel;
+
+		List<DfInfo> result = new ArrayList<>();
+		Map<Path, Long> sizes = treeSizeVisitor.getSizes();
+		for (Path path : treeSizeVisitor.getDates()) {
+			recover -= sizes.get(path);
+			result.add(new DfInfoImpl(path));
+			if (recover <= 0) {
+				break;
+			}
+		}
+		return result;
+
 	}
 
 }

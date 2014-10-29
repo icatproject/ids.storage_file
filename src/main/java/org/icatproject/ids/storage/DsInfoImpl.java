@@ -20,8 +20,13 @@ public class DsInfoImpl implements DsInfo {
 		this.visitId = visitId;
 	}
 
+	public DsInfoImpl(long invId, long dsId) {
+		this.invId = invId;
+		this.dsId = dsId;
+	}
+
 	@Override
-	public long getDsId() {
+	public Long getDsId() {
 		return dsId;
 	}
 
@@ -36,7 +41,7 @@ public class DsInfoImpl implements DsInfo {
 	}
 
 	@Override
-	public long getFacilityId() {
+	public Long getFacilityId() {
 		return facilityId;
 	}
 
@@ -46,7 +51,7 @@ public class DsInfoImpl implements DsInfo {
 	}
 
 	@Override
-	public long getInvId() {
+	public Long getInvId() {
 		return invId;
 	}
 
@@ -58,6 +63,11 @@ public class DsInfoImpl implements DsInfo {
 	@Override
 	public String getVisitId() {
 		return visitId;
+	}
+
+	@Override
+	public String toString() {
+		return invId + " " + dsId;
 	}
 
 }

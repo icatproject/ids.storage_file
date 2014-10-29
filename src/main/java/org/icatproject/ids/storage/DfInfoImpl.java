@@ -1,5 +1,7 @@
 package org.icatproject.ids.storage;
 
+import java.nio.file.Path;
+
 import org.icatproject.ids.plugin.DfInfo;
 
 public class DfInfoImpl implements DfInfo {
@@ -14,13 +16,17 @@ public class DfInfoImpl implements DfInfo {
 		this.dfName = dfName;
 	}
 
+	public DfInfoImpl(Path path) {
+		this.dfLocation = path.toString();
+	}
+
 	@Override
 	public String getCreateId() {
 		return createId;
 	}
 
 	@Override
-	public long getDfId() {
+	public Long getDfId() {
 		return dfId;
 	}
 
@@ -37,6 +43,11 @@ public class DfInfoImpl implements DfInfo {
 	@Override
 	public String getModId() {
 		return modId;
+	}
+
+	@Override
+	public String toString() {
+		return dfLocation;
 	}
 
 }
