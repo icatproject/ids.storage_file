@@ -64,7 +64,7 @@ public class MainFileStorage implements MainStorageInterface {
 	}
 
 	@Override
-	public void delete(String location) throws IOException {
+	public void delete(String location, String createId, String modId) throws IOException {
 		Path path = baseDir.resolve(location);
 		Files.delete(path);
 		/* Try deleting empty directories */
