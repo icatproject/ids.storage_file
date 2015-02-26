@@ -19,8 +19,12 @@ import org.icatproject.ids.plugin.DsInfo;
 import org.icatproject.ids.plugin.MainStorageInterface;
 import org.icatproject.utils.CheckedProperties;
 import org.icatproject.utils.CheckedProperties.CheckedPropertyException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MainFileStorage implements MainStorageInterface {
+
+	private final static Logger logger = LoggerFactory.getLogger(MainFileStorage.class);
 
 	Path baseDir;
 
@@ -120,22 +124,23 @@ public class MainFileStorage implements MainStorageInterface {
 	}
 
 	/*
-	 * This assumes that all datafiles within a dataset have roughly the same date. If not it will
-	 * archive much more than necessary.
+	 * This assumes that all datafiles within a dataset have roughly the same
+	 * date. If not it will archive much more than necessary.
 	 */
 	@Override
-	public List<DsInfo> getDatasetsToArchive(long lowArchivingLevel, long highArchivingLevel)
-			throws IOException {
+	public List<DsInfo> getDatasetsToArchive(long lowArchivingLevel, long highArchivingLevel) throws IOException {
 		TreeSizeVisitor treeSizeVisitor = new TreeSizeVisitor(baseDir);
 
 		Files.walkFileTree(baseDir, treeSizeVisitor);
 		long size = treeSizeVisitor.getSize();
 
 		if (size < highArchivingLevel) {
+			logger.debug("Size " + size + " < highArchivingLevel " + highArchivingLevel + " no action");
 			return Collections.emptyList();
 		}
 
 		long recover = size - lowArchivingLevel;
+		logger.debug("Want to reduce size by " + recover);
 
 		List<DsInfo> result = new ArrayList<>();
 		Map<Path, Long> sizes = treeSizeVisitor.getSizes();
@@ -151,22 +156,24 @@ public class MainFileStorage implements MainStorageInterface {
 				break;
 			}
 		}
+		logger.debug(result.size() + " DsInfos returned to reduce size");
 		return result;
 	}
 
 	@Override
-	public List<DfInfo> getDatafilesToArchive(long lowArchivingLevel, long highArchivingLevel)
-			throws IOException {
+	public List<DfInfo> getDatafilesToArchive(long lowArchivingLevel, long highArchivingLevel) throws IOException {
 		TreeSizeVisitor treeSizeVisitor = new TreeSizeVisitor(baseDir);
 
 		Files.walkFileTree(baseDir, treeSizeVisitor);
 		long size = treeSizeVisitor.getSize();
 
 		if (size < highArchivingLevel) {
+			logger.debug("Size " + size + " < highArchivingLevel " + highArchivingLevel + " no action");
 			return Collections.emptyList();
 		}
 
 		long recover = size - lowArchivingLevel;
+		logger.debug("Want to reduce size by " + recover);
 
 		List<DfInfo> result = new ArrayList<>();
 		Map<Path, Long> sizes = treeSizeVisitor.getSizes();
@@ -177,6 +184,8 @@ public class MainFileStorage implements MainStorageInterface {
 				break;
 			}
 		}
+
+		logger.debug(result.size() + " DfInfos returned to reduce size");
 		return result;
 
 	}

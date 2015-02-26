@@ -15,12 +15,12 @@ import java.util.Map;
 
 public class TreeSizeVisitor extends SimpleFileVisitor<Path> {
 
-	static Comparator<Path> dateComparator = new Comparator<Path>() {
+	Comparator<Path> dateComparator = new Comparator<Path>() {
 
 		@Override
 		public int compare(Path o1, Path o2) {
-			long m1 = o1.toFile().lastModified();
-			long m2 = o2.toFile().lastModified();
+			long m1 = baseDir.resolve(o1).toFile().lastModified();
+			long m2 = baseDir.resolve(o2).toFile().lastModified();
 			return (m1 < m2) ? -1 : ((m1 == m2) ? 0 : 1);
 		}
 	};
