@@ -8,6 +8,11 @@
 
 	<body>
 
+		<section name="1.3.2">
+			<p>Remove logging introduced in 1.3.1.
+			</p>
+		</section>
+
 		<section name="1.3.1">
 			<p>Add logging and correct error in order of datasets and datafiles
 				to offer for archive.
