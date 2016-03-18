@@ -1,6 +1,4 @@
-# Glasfish home, must contain "glassfish/domains"
-glassfish=/home/fisher/pf/glassfish4
-
-
-# Glassfish admin port (normally 4848)
+secure = true
+home=/home/fisher/pf/glassfish4
+container=glassfish
 port=4848
