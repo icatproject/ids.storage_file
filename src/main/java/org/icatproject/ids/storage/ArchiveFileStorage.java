@@ -96,8 +96,7 @@ public class ArchiveFileStorage implements ArchiveStorageInterface {
 		Set<DfInfo> failures = new HashSet<>();
 		for (DfInfo dfInfo : dfInfos) {
 			String location = dfInfo.getDfLocation();
-			try {
-				InputStream is = Files.newInputStream(baseDir.resolve(dfInfo.getDfLocation()));
+			try (InputStream is = Files.newInputStream(baseDir.resolve(dfInfo.getDfLocation()))) {
 				mainStorageInterface.put(is, location);
 			} catch (IOException e) {
 				failures.add(dfInfo);

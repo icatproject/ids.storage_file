@@ -9,9 +9,19 @@
 	<body>
 
 		<section name="1.3.3">
-			<p>Change dependency to ids.plugin 1.3.1 to avoid dependency upon
-				icat.client.
+			<p>Change dependency to ids.plugin 1.3.1 and fix some bugs.
 			</p>
+			<ul>
+				<li>Change dependency to ids.plugin 1.3.1 to avoid dependency upon
+					icat.client
+				</li>
+				<li>Ensure that files are closed in
+					ArchiveFileStorage.restore()
+				</li>
+				<li>Change some types from long to Long so that null values can be
+					returned to the IDS tidier.
+				</li>
+			</ul>
 		</section>
 
 		<section name="1.3.2">
