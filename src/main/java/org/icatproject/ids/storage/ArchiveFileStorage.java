@@ -98,6 +98,7 @@ public class ArchiveFileStorage implements ArchiveStorageInterface {
 			String location = dfInfo.getDfLocation();
 			try (InputStream is = Files.newInputStream(baseDir.resolve(dfInfo.getDfLocation()))) {
 				mainStorageInterface.put(is, location);
+				is.close();
 			} catch (IOException e) {
 				failures.add(dfInfo);
 			}
