@@ -1,78 +1,81 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document xmlns="http://maven.apache.org/XDOC/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+<document xmlns="http://maven.apache.org/XDOC/2.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
 
-    <properties>
-        <title>IDS Installation</title>
-    </properties>
+<properties>
+<title>IDS Installation</title>
+</properties>
 
-    <body>
+<body>
 
-        <section name="Installation">
+	<section name="Installation">
 
-            <subsection name="Compatibility">This will work with an IDS plugin version of 1.1.0 or greater.</subsection>
+		<subsection name="Compatibility">This will work with an
+		IDS plugin version of 1.1.0 or greater.</subsection>
 
-            <subsection name="Prerequisites">
+		<subsection name="Prerequisites">
 
-                <ul>
-                    <li>
-                        The ids distribution:
-                        <a href="${repoUrl}/org/icatproject/ids.storage_file/${project.version}/ids.storage_file-${project.version}-distro.zip">ids.storage_file-${project.version}-distro.zip</a>
-                    </li>
+		<ul>
+			<li>The ids distribution: <a
+				href="${repoUrl}/org/icatproject/ids.storage_file/${project.version}/ids.storage_file-${project.version}-distro.zip">ids.storage_file-${project.version}-distro.zip</a>
+			</li>
 
-                    <li>
-                        A suitable deployed container (here assumed to be glassfish though tomcat should be sufficient) to support a web
-                        application.
-                        Testing has been carried out with Glassfish 4.0.
-                        <a href="http://icatproject.org/installation/glassfish/">Glassfish installation instructions</a>
-                        are available.
-                    </li>
+			<li>A suitable deployed container (here assumed to be glassfish
+				though tomcat should be sufficient) to support a web application.
+				Testing has been carried out with Payara 41. <a
+				href="http://icatproject.org/installation/glassfish/">Payara/Glassfish
+					installation instructions</a> are available.
+			</li>
 
-                    <li>
-                        Python (version 2.4 to 2.7) installed on the server.
-                    </li>
-                </ul>
-            </subsection>
+			<li>Python (version 2.4 to 2.7) installed on the server.</li>
+		</ul>
+		</subsection>
 
-            <subsection name="Summary of steps">
-                <ol>
-                    <li>
-                        Please follow
-                        <a href="http://icatproject.org/installation/component/"> the generic installation instructions</a>
-                    </li>
-                </ol>
-            </subsection>
+		<subsection name="Summary of steps">
+		<ol>
+			<li>Please follow <a
+				href="http://icatproject.org/installation/component/"> the
+					generic installation instructions</a>
+			</li>
+		</ol>
+		</subsection>
 
-            <subsection name="The ids.storage_file-setup.properties file">
+		<subsection name="The setup.properties file">
 
-                <dl>
-                    <dt>glassfish</dt>
-                    <dd>is the top level of the glassfish installation. It must contain "glassfish/domains".
-                    </dd>
-                    <dt>port</dt>
-                    <dd>is the administration port of the chosen glassfish domain which is typically 4848.</dd>
-                </dl>
-            </subsection>
+		<dl>
+			<dt>container</dt>
+			<dd>
+				Values must be chosen from: <a target="_blank"
+					href="http://www.eclipse.org/eclipselink/api/2.6/org/eclipse/persistence/config/TargetServer.html">TargetServer</a>
+				Though only Glassfish is working properly at the moment.
+			</dd>
+			<dt>home</dt>
+			<dd>is the top level of the container installation. For
+				glassfish/payara it must contain "glassfish/domains" and for wildfly
+				it must contain jboss-modules.jar.</dd>
+			<dt>port</dt>
+			<dd>is the administration port of the container which is
+				typically 4848 for glassfish and 9990 for wildfly.</dd>
+			<dt>secure</dt>
+			<dd>must be set to true or false. If true then only https and
+				not http connections will be allowed.</dd>
+		</dl>
+		</subsection>
 
 
-            <subsection name="The ids.storage_file.main.properties file">
-                <dl>
-                    <dt>dir</dt>
-                    <dd>
-                        Directory to hold the datafiles
-                    </dd>
-                </dl>
-            </subsection>
+		<subsection
+			name="Properties to set in the run.properties for the ids.server">
+		<dl>
+			<dt>plugin.main.dir</dt>
+			<dd>Directory for main storage</dd>
 
-            <subsection name="The ids.storage_file.archive.properties file">
-                <dl>
-                    <dt>dir</dt>
-                    <dd>
-                        Directory to hold the zipped datafiles
-                    </dd>
-                </dl>
-            </subsection>
+			<dt>plugin.archive.dir</dt>
+			<dd>Directory for archive storage</dd>
+		</dl>
+		</subsection>
 
-        </section>
-    </body>
+	</section>
+</body>
 </document>
-            
+

@@ -1,8 +1,10 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+
 	<groupId>org.icatproject</groupId>
 	<artifactId>ids.storage_file</artifactId>
-	<version>1.3.4-SNAPSHOT</version>
+	<version>1.4.0-SNAPSHOT</version>
 	<name>IDS storage_file</name>
 
 	<description>File plugin for ICAT Data Service.</description>
@@ -10,26 +12,28 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<repoUrl>http://www.icatproject.org/mvn/repo</repoUrl>
+		<repoUrl>https://repo.icatproject.org/repo</repoUrl>
 		<project.scm.id>github</project.scm.id>
+		<gitUrl>https://github.com/icatproject/ids.storage_file</gitUrl>
+
 	</properties>
 
 	<repositories>
 		<repository>
 			<id>ICAT Repo</id>
-			<url>http://www.icatproject.org/mvn/repo</url>
+			<url>${repoUrl}</url>
 		</repository>
 	</repositories>
 
 	<scm>
-		<connection>scm:git:https://github.com/icatproject/ids.storage_file.git</connection>
-		<developerConnection>scm:git:https://github.com/icatproject/ids.storage_file.git</developerConnection>
-		<url>https://github.com/icatproject/ids.storage_file</url>
+		<connection>scm:git:${gitUrl}.git</connection>
+		<developerConnection>scm:git:${gitUrl}.git</developerConnection>
+		<url>${gitUrl}</url>
 		<tag>HEAD</tag>
 	</scm>
 
 	<issueManagement>
-		<url>https://github.com/icatproject/ids.storage_file/issues</url>
+		<url>${gitUrl}/issues</url>
 		<system>GitHub</system>
 	</issueManagement>
 
@@ -46,14 +50,14 @@
 	</organization>
 
 	<distributionManagement>
-		<downloadUrl>http://www.icatproject.org/mvn/repo</downloadUrl>
+		<downloadUrl>${repoUrl}</downloadUrl>
 		<site>
-			<id>website</id>
-			<url>scp://www.icatproject.org/var/www/html/mvn/site/ids/storage_file/${project.version}</url>
+			<id>repo.icatproject.org</id>
+			<url>dav:${repoUrl}/../site/ids/storage_file/${project.version}</url>
 		</site>
 		<repository>
-			<id>repo</id>
-			<url>scp://www.icatproject.org/var/www/html/mvn/repo</url>
+			<id>repo.icatproject.org</id>
+			<url>dav:${repoUrl}</url>
 		</repository>
 	</distributionManagement>
 
@@ -62,7 +66,7 @@
 		<dependency>
 			<groupId>org.icatproject</groupId>
 			<artifactId>icat.utils</artifactId>
-			<version>4.14.0</version>
+			<version>4.16.0</version>
 		</dependency>
 
 		<dependency>
@@ -81,6 +85,15 @@
 	</dependencies>
 
 	<build>
+
+		<extensions>
+			<extension>
+				<groupId>org.apache.maven.wagon</groupId>
+				<artifactId>wagon-webdav-jackrabbit</artifactId>
+				<version>2.10</version>
+			</extension>
+		</extensions>
+
 		<plugins>
 
 			<plugin>
@@ -101,7 +114,6 @@
 					<artifactSet>
 						<includes>
 							<include>org.icatproject:ids.plugin</include>
-							<include>org.icatproject:icat.utils</include>
 						</includes>
 					</artifactSet>
 				</configuration>
@@ -138,26 +150,12 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-site-plugin</artifactId>
 				<version>3.4</version>
-				<dependencies>
-					<dependency><!-- add support for ssh/scp -->
-						<groupId>org.apache.maven.wagon</groupId>
-						<artifactId>wagon-ssh</artifactId>
-						<version>2.10</version>
-					</dependency>
-				</dependencies>
 			</plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-deploy-plugin</artifactId>
 				<version>2.8.2</version>
-				<dependencies>
-					<dependency><!-- add support for ssh/scp -->
-						<groupId>org.apache.maven.wagon</groupId>
-						<artifactId>wagon-ssh</artifactId>
-						<version>2.10</version>
-					</dependency>
-				</dependencies>
 			</plugin>
 
 			<plugin>
