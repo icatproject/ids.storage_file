@@ -4,7 +4,9 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.HashSet;
@@ -34,12 +36,10 @@ public class ArchiveFileStorage implements ArchiveStorageInterface {
 	public void delete(DsInfo dsInfo) throws IOException {
 		String location = dsInfo.getInvId() + "/" + dsInfo.getDsId();
 		Path path = baseDir.resolve(location);
-		Files.delete(path);
-		path = path.getParent();
 		try {
 			Files.delete(path);
-		} catch (IOException e) {
-			// Investigation directory probably not empty
+			Files.delete(path.getParent());
+		} catch (DirectoryNotEmptyException | NoSuchFileException e) {
 		}
 	}
 
