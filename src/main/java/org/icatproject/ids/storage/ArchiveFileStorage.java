@@ -14,12 +14,12 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
-import org.icatproject.ids.plugin.ArchiveStorageInterface;
+import org.icatproject.ids.plugin.AbstractArchiveStorage;
 import org.icatproject.ids.plugin.DfInfo;
 import org.icatproject.ids.plugin.DsInfo;
 import org.icatproject.ids.plugin.MainStorageInterface;
 
-public class ArchiveFileStorage implements ArchiveStorageInterface {
+public class ArchiveFileStorage extends AbstractArchiveStorage {
 
 	Path baseDir;
 

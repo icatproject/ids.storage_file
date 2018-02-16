@@ -15,11 +15,11 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.UUID;
 
+import org.icatproject.ids.plugin.AbstractMainStorage;
 import org.icatproject.ids.plugin.DfInfo;
 import org.icatproject.ids.plugin.DsInfo;
-import org.icatproject.ids.plugin.MainStorageInterface;
 
-public class MainFileStorage implements MainStorageInterface {
+public class MainFileStorage extends AbstractMainStorage {
 
 	Path baseDir;
 
