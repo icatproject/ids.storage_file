@@ -3,11 +3,11 @@ package org.icatproject.ids.storage;
 import static org.junit.Assert.assertEquals;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
@@ -48,11 +48,12 @@ public class MainFileStorageTest {
 	@BeforeClass
 	public static void beforeClass() throws IOException, ClassNotFoundException, InterruptedException {
 
+		Path dir = Paths.get(System.getProperty("testHome"), "storage_file");
+		Files.createDirectories(dir);
 		Properties props = new Properties();
-		props.load(MainFileStorageTest.class.getClassLoader().getResourceAsStream("main.test.properties"));
+		props.setProperty("plugin.main.dir", dir.toString());
 		mainFileStorage = new MainFileStorage(props);
 
-		Path dir = new File(props.getProperty("plugin.main.dir")).toPath();
 		if (dir != null) {
 			if (Files.exists(dir)) {
 				Files.walkFileTree(dir, treeDeleteVisitor);
