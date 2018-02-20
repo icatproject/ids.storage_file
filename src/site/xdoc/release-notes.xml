@@ -8,6 +8,22 @@
 
 	<body>
 
+		<section name="1.4.1">
+			<p>Adopt changes from ids.plugin 1.4.0</p>
+			<ul>
+				<li>Derive the storage classes from the new abstract classes
+					defined in the plugin.
+				</li>
+				<li>Do not throw an exception in ArchiveStorage.delete() if the
+					file does not exist. (PR #3)
+				</li>
+				<li>Add a configuration option "testHome" to be set in
+					settings.xml. The main storage directory to be used during
+					the tests is created relative to this directory. (PR #4)
+				</li>
+			</ul>
+		</section>
+
 		<section name="1.4.0">
 			<p>Make compatible with ids.server 1.8.0</p>
 		</section>
