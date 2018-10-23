@@ -20,6 +20,23 @@ import org.junit.Test;
 
 public class MainFileStorageTest {
 
+	/*
+	 * Note: this code assumes that the size of a directory in the
+	 * file system is 4096 bytes or less.  We actually need:
+	 *   file_size > 6*directory_size
+	 *   high0 > 4*file_size + 6*directory_size
+	 *   high1 < 4*file_size
+	 *   low1 < high1
+	 *   low1 > 3*file_size + 6*directory_size
+	 *   low2 < 3*file_size
+	 *   low2 > 2*file_size + 6*directory_size
+	 */
+	private static final int file_size = 32768;
+	private static final int high0 = 163840;
+	private static final int high1 = 129024;
+	private static final int low1 = 124928;
+	private static final int low2 = 94208;
+
 	public class DeleteVisitor extends SimpleFileVisitor<Path> {
 
 		@Override
@@ -67,49 +84,50 @@ public class MainFileStorageTest {
 
 		Files.createDirectories(dir.resolve("2/3"));
 
-		Files.copy(new ByteArrayInputStream("We don't like as very much f1".getBytes()), dir.resolve("1/1/f1"));
+		byte[] buffer = new byte[file_size];
+		Files.copy(new ByteArrayInputStream(buffer), dir.resolve("1/1/f1"));
 		Thread.sleep(1000);
-		Files.copy(new ByteArrayInputStream("We don't like these much f2".getBytes()), dir.resolve("1/2/f2"));
+		Files.copy(new ByteArrayInputStream(buffer), dir.resolve("1/2/f2"));
 		Thread.sleep(1000);
-		Files.copy(new ByteArrayInputStream("We don't like these much f3".getBytes()), dir.resolve("1/2/f3"));
+		Files.copy(new ByteArrayInputStream(buffer), dir.resolve("1/2/f3"));
 		Thread.sleep(1000);
-		Files.copy(new ByteArrayInputStream("We don't like these much f4".getBytes()), dir.resolve("2/3/f4"));
+		Files.copy(new ByteArrayInputStream(buffer), dir.resolve("2/3/f4"));
 
 	}
 
 	@Test
 	public void testGetDatafilesToArchive() throws Exception {
-		List<DfInfo> dfInfos = mainFileStorage.getDatafilesToArchive(24670, 24690);
+		List<DfInfo> dfInfos = mainFileStorage.getDatafilesToArchive(low1, high0);
 		assertEquals(0, dfInfos.size());
 
-		dfInfos = mainFileStorage.getDatafilesToArchive(24670, 24680);
+		dfInfos = mainFileStorage.getDatafilesToArchive(low1, high1);
 		assertEquals(1, dfInfos.size());
 		assertEquals("1/1/f1", dfInfos.get(0).getDfLocation());
 
-		dfInfos = mainFileStorage.getDatafilesToArchive(24650, 24680);
+		dfInfos = mainFileStorage.getDatafilesToArchive(low2, high1);
 		assertEquals(2, dfInfos.size());
 		assertEquals("1/1/f1", dfInfos.get(0).getDfLocation());
 		assertEquals("1/2/f2", dfInfos.get(1).getDfLocation());
 
-		dfInfos = mainFileStorage.getDatafilesToArchive(0, 24680);
+		dfInfos = mainFileStorage.getDatafilesToArchive(0, high1);
 		assertEquals(4, dfInfos.size());
 	}
 
 	@Test
 	public void testGetDatasetsToArchive() throws Exception {
-		List<DsInfo> dsInfos = mainFileStorage.getDatasetsToArchive(24670, 24690);
+		List<DsInfo> dsInfos = mainFileStorage.getDatasetsToArchive(low1, high0);
 		assertEquals(0, dsInfos.size());
 
-		dsInfos = mainFileStorage.getDatasetsToArchive(24670, 24680);
+		dsInfos = mainFileStorage.getDatasetsToArchive(low1, high1);
 		assertEquals(1, dsInfos.size());
 		assertEquals("1/1", dsInfos.get(0).toString());
 
-		dsInfos = mainFileStorage.getDatasetsToArchive(24650, 24680);
+		dsInfos = mainFileStorage.getDatasetsToArchive(low2, high1);
 		assertEquals(2, dsInfos.size());
 		assertEquals("1/1", dsInfos.get(0).toString());
 		assertEquals("1/2", dsInfos.get(1).toString());
 
-		dsInfos = mainFileStorage.getDatasetsToArchive(0, 24680);
+		dsInfos = mainFileStorage.getDatasetsToArchive(0, high1);
 		assertEquals(3, dsInfos.size());
 		assertEquals("1/1", dsInfos.get(0).toString());
 		assertEquals("1/2", dsInfos.get(1).toString());
