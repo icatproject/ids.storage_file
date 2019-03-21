@@ -60,16 +60,15 @@ public class ArchiveFileStorage extends AbstractArchiveStorage {
 	@Override
 	public void delete(String location) throws IOException {
 		Path path = baseDir.resolve(location);
-		Files.delete(path);
-		/* Try deleting empty directories */
-		path = path.getParent();
 		try {
+			Files.delete(path);
+			/* Try deleting empty directories */
+			path = path.getParent();
 			while (!path.equals(baseDir)) {
 				Files.delete(path);
 				path = path.getParent();
 			}
-		} catch (IOException e) {
-			// Directory probably not empty
+		} catch (DirectoryNotEmptyException | NoSuchFileException e) {
 		}
 	}
 

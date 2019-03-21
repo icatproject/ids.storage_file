@@ -4,7 +4,9 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,15 +41,14 @@ public class MainFileStorage extends AbstractMainStorage {
 		if (Files.exists(path)) {
 			Files.walkFileTree(path, treeDeleteVisitor);
 		}
-		/* Try deleting empty directories */
-		path = path.getParent();
 		try {
+			/* Try deleting empty directories */
+			path = path.getParent();
 			while (!path.equals(baseDir)) {
 				Files.delete(path);
 				path = path.getParent();
 			}
-		} catch (IOException e) {
-			// Directory probably not empty
+		} catch (DirectoryNotEmptyException | NoSuchFileException e) {
 		}
 
 	}
@@ -55,16 +56,15 @@ public class MainFileStorage extends AbstractMainStorage {
 	@Override
 	public void delete(String location, String createId, String modId) throws IOException {
 		Path path = baseDir.resolve(location);
-		Files.delete(path);
-		/* Try deleting empty directories */
-		path = path.getParent();
 		try {
+			Files.delete(path);
+			/* Try deleting empty directories */
+			path = path.getParent();
 			while (!path.equals(baseDir)) {
 				Files.delete(path);
 				path = path.getParent();
 			}
-		} catch (IOException e) {
-			// Directory probably not empty
+		} catch (DirectoryNotEmptyException | NoSuchFileException e) {
 		}
 	}
 
