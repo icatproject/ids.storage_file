@@ -8,6 +8,20 @@
 
 	<body>
 
+		<section name="1.4.2">
+			<p>Adopt changes from ids.plugin 1.5.0</p>
+			<ul>
+				<li>MainFileStorage.exists() methods do not throw IOException.
+					(icatproject/ids.plugin#5)
+				</li>
+				<li>delete() methods must not throw NoSuchFileException.
+					(icatproject/ids.plugin#9)
+				</li>
+				<li>Require ids.plugin 1.5.0.
+				</li>
+			</ul>
+		</section>
+
 		<section name="1.4.1">
 			<p>Adopt changes from ids.plugin 1.4.0</p>
 			<ul>
