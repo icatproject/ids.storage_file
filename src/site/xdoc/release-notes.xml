@@ -8,6 +8,14 @@
 
 	<body>
 
+		<section name="devel">
+			<p>Development, no yet released</p>
+			<ul>
+				<li>#7: Bump junit to version 4.13.1.
+				</li>
+			</ul>
+		</section>
+
 		<section name="1.4.2">
 			<p>Adopt changes from ids.plugin 1.5.0</p>
 			<ul>
