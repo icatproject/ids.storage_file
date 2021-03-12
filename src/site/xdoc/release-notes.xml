@@ -8,7 +8,7 @@
 
 	<body>
 
-		<section name="devel">
+		<section name="1.4.3">
 			<p>Development, no yet released</p>
 			<ul>
 				<li>#8: Bump icat.utils to version 4.16.1.
