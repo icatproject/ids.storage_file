@@ -8,6 +8,14 @@
 
 	<body>
 
+		<section name="devel">
+			<p>Development, no yet released</p>
+			<ul>
+				<li>#9: Use python3 instead of python in the interpreter line of setup.py
+				</li>
+			</ul>
+		</section>
+
 		<section name="1.4.3">
 			<p>Compatibility with Python 3</p>
 			<ul>
